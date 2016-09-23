@@ -8707,7 +8707,7 @@ var _evancz$elm_http$Http$post = F3(
 var _jmarca$elm_d3_map$JsonClue$decodeResult = A2(
 	_elm_lang$core$Json_Decode$at,
 	_elm_lang$core$Native_List.fromArray(
-		['data', 'image_url']),
+		['status']),
 	_elm_lang$core$Json_Decode$string);
 var _jmarca$elm_d3_map$JsonClue$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
@@ -8748,7 +8748,11 @@ var _jmarca$elm_d3_map$JsonClue$update = F2(
 			case 'MorePlease':
 				return {ctor: '_Tuple2', _0: model, _1: _jmarca$elm_d3_map$JsonClue$getIt};
 			case 'FetchSucceed':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				return {
+					ctor: '_Tuple2',
+					_0: A2(_jmarca$elm_d3_map$JsonClue$Model, _p0._0, model.records),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			default:
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}

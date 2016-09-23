@@ -47,8 +47,8 @@ update msg model =
     MorePlease ->
       (model, getIt)
 
-    FetchSucceed _ ->
-      (model, Cmd.none)
+    FetchSucceed status ->
+      (Model status model.records, Cmd.none)
 
     FetchFail _ ->
       (model, Cmd.none)
@@ -94,4 +94,4 @@ getIt =
 
 decodeResult : Json.Decoder String
 decodeResult =
-  Json.at ["data", "image_url"] Json.string
+  Json.at ["status"] Json.string
