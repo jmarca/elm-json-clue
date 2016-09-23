@@ -5,7 +5,7 @@ import Html.App as Html
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http
-import Json.Decode as Json
+import Json.Decode as Json exposing (..)
 import Task
 
 main =
@@ -37,7 +37,7 @@ init file =
 
 type Msg
   = MorePlease
-  | FetchSucceed String
+  | FetchSucceed JsonRecord
   | FetchFail Http.Error
 
 
@@ -47,8 +47,15 @@ update msg model =
     MorePlease ->
       (model, getIt)
 
-    FetchSucceed status ->
-      (Model status model.records, Cmd.none)
+    FetchSucceed rec ->
+        let
+            incoming = case rec.records of
+                           one :: rest ->
+                               one
+                           _ ->
+                               ["empty"]
+        in
+            (Model rec.status incoming, Cmd.none)
 
     FetchFail _ ->
       (model, Cmd.none)
@@ -71,6 +78,7 @@ view model =
   div []
     [ h2 [] [Html.text model.status]
     , p[][ Html.text  model.status ]
+    , p[][ Html.text (List.foldr (++) ""(List.intersperse ", " model.records)) ]
     , button [ onClick MorePlease ] [ Html.text "More Please!" ]
     ]
 
@@ -87,11 +95,9 @@ getIt =
     Task.perform FetchFail FetchSucceed (Http.get decodeResult url)
 
 
--- decodeListPart : Json.Decode.list List
--- decodeListPart =
---   Json.Decode.list Json.Decode.string
+type alias JsonRecord = {status: String, records: List (List String)}
 
-
-decodeResult : Json.Decoder String
-decodeResult =
-  Json.at ["status"] Json.string
+decodeResult : Json.Decoder JsonRecord
+decodeResult = Json.object2 JsonRecord
+               ("status" := Json.string)
+               ("records" := Json.list (Json.list Json.string))

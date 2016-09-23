@@ -8704,11 +8704,6 @@ var _evancz$elm_http$Http$post = F3(
 			A2(_evancz$elm_http$Http$send, _evancz$elm_http$Http$defaultSettings, request));
 	});
 
-var _jmarca$elm_d3_map$JsonClue$decodeResult = A2(
-	_elm_lang$core$Json_Decode$at,
-	_elm_lang$core$Native_List.fromArray(
-		['status']),
-	_elm_lang$core$Json_Decode$string);
 var _jmarca$elm_d3_map$JsonClue$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
@@ -8727,6 +8722,19 @@ var _jmarca$elm_d3_map$JsonClue$init = function (file) {
 		_1: _elm_lang$core$Platform_Cmd$none
 	};
 };
+var _jmarca$elm_d3_map$JsonClue$JsonRecord = F2(
+	function (a, b) {
+		return {status: a, records: b};
+	});
+var _jmarca$elm_d3_map$JsonClue$decodeResult = A3(
+	_elm_lang$core$Json_Decode$object2,
+	_jmarca$elm_d3_map$JsonClue$JsonRecord,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'status', _elm_lang$core$Json_Decode$string),
+	A2(
+		_elm_lang$core$Json_Decode_ops[':='],
+		'records',
+		_elm_lang$core$Json_Decode$list(
+			_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string))));
 var _jmarca$elm_d3_map$JsonClue$FetchFail = function (a) {
 	return {ctor: 'FetchFail', _0: a};
 };
@@ -8748,9 +8756,19 @@ var _jmarca$elm_d3_map$JsonClue$update = F2(
 			case 'MorePlease':
 				return {ctor: '_Tuple2', _0: model, _1: _jmarca$elm_d3_map$JsonClue$getIt};
 			case 'FetchSucceed':
+				var _p2 = _p0._0;
+				var incoming = function () {
+					var _p1 = _p2.records;
+					if (_p1.ctor === '::') {
+						return _p1._0;
+					} else {
+						return _elm_lang$core$Native_List.fromArray(
+							['empty']);
+					}
+				}();
 				return {
 					ctor: '_Tuple2',
-					_0: A2(_jmarca$elm_d3_map$JsonClue$Model, _p0._0, model.records),
+					_0: A2(_jmarca$elm_d3_map$JsonClue$Model, _p2.status, incoming),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
@@ -8780,6 +8798,22 @@ var _jmarca$elm_d3_map$JsonClue$view = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html$text(model.status)
+					])),
+				A2(
+				_elm_lang$html$Html$p,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(
+						A3(
+							_elm_lang$core$List$foldr,
+							F2(
+								function (x, y) {
+									return A2(_elm_lang$core$Basics_ops['++'], x, y);
+								}),
+							'',
+							A2(_elm_lang$core$List$intersperse, ', ', model.records)))
 					])),
 				A2(
 				_elm_lang$html$Html$button,
