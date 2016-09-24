@@ -27,6 +27,38 @@ type alias Model =
   , records : List String
   }
 
+type alias Properties =
+    { gid : Int
+    ,id : String}
+
+type alias Coordinate =
+    (Float, Float)
+
+type alias PolyLine =
+     List Coordinate
+
+type alias PolyCoordinates =
+     List ( List  PolyLine  )
+
+
+type alias Geometry =
+    { type' : String
+      ,coordinates : PolyCoordinates }
+
+type alias Feature =
+    {type' : String
+    ,properties : Properties
+    ,geometry : Geometry }
+
+-- {"type":"Feature",
+--    "properties":{
+--            "gid":25083,
+--            "id":"120_278"},
+--    "geometry":{
+--            "type":"Polygon",
+--            "coordinates":[[[-123.08153279727972,42.0060393009301],[-123.10209111311131,42.0060393009301],[-123.10209111311131,42.007934650465046],[-123.08153279727972,42.0060393009301]]]}
+--   }
+
 
 init: String -> (Model, Cmd Msg)
 init file =
@@ -35,9 +67,16 @@ init file =
 
 -- UPDATE
 
+port d3Update : (List String) -> Cmd msg
+port getTopoJson : Json.Value -> Cmd msg
+-- port for listening for translated features from JavaScript
+port features : (List String -> msg) -> Sub msg
+
 type Msg
   = MorePlease
   | FetchSucceed JsonRecord
+  | FetchSucceed2 Json.Value
+  | Suggest (List String)
   | FetchFail Http.Error
 
 
@@ -45,7 +84,7 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     MorePlease ->
-      (model, getIt)
+      (model, (getIt2 model.status))
 
     FetchSucceed rec ->
         let
@@ -57,8 +96,14 @@ update msg model =
         in
             (Model rec.status incoming, Cmd.none)
 
+    FetchSucceed2 rec ->
+        (model, getTopoJson rec)
+
+    Suggest newFeatures ->
+        (model, d3Update newFeatures)
+
     FetchFail _ ->
-      (model, Cmd.none)
+        (model, Cmd.none)
 
 
 
@@ -66,8 +111,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.none
-
+  features Suggest
 
 -- VIEW
 
@@ -86,14 +130,24 @@ view model =
 
 -- HTTP
 
-getIt : Cmd Msg
+getIt :  Cmd Msg
 getIt =
   let
     url =
       "data/test.json"
   in
-    Task.perform FetchFail FetchSucceed (Http.get decodeResult url)
+    Task.perform FetchFail FetchSucceed2 (Http.get decodeResult2 url)
 
+getIt2 : String -> Cmd Msg
+getIt2 f =
+  let
+    url = f
+  in
+    Task.perform FetchFail FetchSucceed2 (Http.get decodeResult2 url)
+
+
+decodeResult2 : Json.Decoder Json.Value
+decodeResult2 = Json.value
 
 type alias JsonRecord = {status: String, records: List (List String)}
 
