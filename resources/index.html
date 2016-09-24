@@ -43,17 +43,6 @@
              var land =
                  topojson.feature(json,{"type":"GeometryCollection"
                                        ,"geometries":allgrids.geometries})
-             var features =
-                 land.features
-                     .map(function(f){
-                         var p = f.properties
-                         var id = (p.i_cell + "_" + p.j_cell)
-                             .replace(/\.0*/g,"")
-                         f.properties = {"id" : id
-                                        ,"gid": p.gid}
-                         return f
-                     })
-
              var mesh =
                  topojson.mesh(json, allgrids, function(a, b) { return a !== b; })
 
@@ -62,23 +51,27 @@
                                         .rotate([124, -32.5])
                                         .fitExtent([[10,10],[480,480]],land))
 
-             var ids = features.map(function(f){
-                 return f.properties.id
+             var id_path = land.features.map(function(f){
+                 var p = f.properties
+                 var id = (p.i_cell + "_" + p.j_cell)
+                     .replace(/\.0*/g,"")
+
+                 return {"id":id
+                        ,"path":path(f)}
              })
              var svg, g, zoom, mesh
-             app.ports.features.send(ids)
 
              // render the map outline here, handle the coloring in elm
              svg = d3.select("svg")
              var g = svg.append("g")
 
-             g.selectAll("path")
-                .data(land.features,function(d,i){
-                    return d.properties.id
-                })
-                .enter().append("path")
-                .attr("class","grid")
-                .attr("d",path)
+             /* g.selectAll("path")
+              *    .data(land.features,function(d,i){
+              *        return d.properties.id
+              *    })
+              *    .enter().append("path")
+              *    .attr("class","grid")
+              *    .attr("d",path)*/
              /* mesh = g.append("path")
               *     .datum(mesh)
               *     .attr("class","grid-border")
@@ -91,6 +84,7 @@
              svg
                  .call(zoom)
 
+             app.ports.features.send(id_path)
 
              return null
              })

@@ -72,13 +72,12 @@ init file =
 port d3Update : (List String) -> Cmd msg
 port getTopoJson : Json.Value -> Cmd msg
 -- port for listening for translated features from JavaScript
-port features : (List String -> msg) -> Sub msg
+port features : (List PathRecord -> msg) -> Sub msg
 
 type Msg
   = MorePlease
-  | FetchSucceed JsonRecord
   | FetchSucceed2 Json.Value
-  | Suggest (List String)
+  | IdPath (List PathRecord)
   | FetchFail Http.Error
 
 
@@ -88,21 +87,11 @@ update msg model =
     MorePlease ->
       (model, Cmd.none)
 
-    FetchSucceed rec ->
-        let
-            incoming = case rec.records of
-                           one :: rest ->
-                               one
-                           _ ->
-                               ["empty"]
-        in
-            (Model rec.status incoming, Cmd.none)
-
     FetchSucceed2 rec ->
         (model, getTopoJson rec)
 
-    Suggest newFeatures ->
-        (model, d3Update newFeatures)
+    IdPath newFeatures ->
+        (model, Cmd.none) --d3Update newFeatures)
 
     FetchFail _ ->
         (model, Cmd.none)
@@ -113,7 +102,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  features Suggest
+  features IdPath
 
 -- VIEW
 
@@ -137,13 +126,6 @@ view model =
 
 -- HTTP
 
-getIt :  Cmd Msg
-getIt =
-  let
-    url =
-      "data/test.json"
-  in
-    Task.perform FetchFail FetchSucceed2 (Http.get decodeResult2 url)
 
 getIt2 : String -> Cmd Msg
 getIt2 f =
@@ -156,9 +138,11 @@ getIt2 f =
 decodeResult2 : Json.Decoder Json.Value
 decodeResult2 = Json.value
 
-type alias JsonRecord = {status: String, records: List (List String)}
+type alias PathRecord = {id : String, path : String}
 
-decodeResult : Json.Decoder JsonRecord
-decodeResult = Json.object2 JsonRecord
-               ("status" := Json.string)
-               ("records" := Json.list (Json.list Json.string))
+--decodeResult : List decodeIdPath
+
+-- decodeIdPath : Json.Decoder PathRecord
+-- decodeIdPath = Json.object2 PathRecord
+--                (  ("id"   := Json.string)
+--                       ("path" := Json.string))
