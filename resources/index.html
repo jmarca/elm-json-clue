@@ -21,6 +21,11 @@
         <script src="js/topojson.min.js"></script>
         <!-- Run our Elm app! -->
         <script>
+         function zoomed(g){
+             return function(){
+                 g.attr("transform",d3.event.transform)
+             }
+         }
          var app =
              // Note: if your Elm module is named "MyThing.Root" you
              // would call "Elm.MyThing.Root.embed(node)" instead.
@@ -43,8 +48,6 @@
                          return f
                      })
 
-             land.features = features
-
              var mesh =
                  topojson.mesh(json, allgrids, function(a, b) { return a !== b; })
 
@@ -56,8 +59,32 @@
              var ids = features.map(function(f){
                  return f.properties.id
              })
-
+             var svg, g, zoom
              app.ports.features.send(ids)
+
+             // render the map outline here, handle the coloring in elm
+             svg = d3.select("svg")
+             var g = svg.append("g")
+
+             zoom = d3.zoom()
+                          .scaleExtent( [1, 512])
+                          .on("zoom", zoomed(g));
+
+             svg
+                 .call(zoom)
+
+             g.selectAll("path")
+                .data(land.features,function(d,i){
+                    return d.properties.id
+                })
+                .enter().append("path")
+                .attr("class","grid")
+                .attr("d",path)
+             /* g.append("path")
+              *             .datum(mesh)
+              *             .attr("class","grid-border")
+              *             .attr("d",path)
+              */
 
              return null
              })

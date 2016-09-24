@@ -36,23 +36,26 @@ div.container div.row {
 
 
 .grid {
-  fill: #eee;
+    fill: #eee;
+    stroke: none;
 }
 
 .grid:hover {
-  fill: orange;
+    fill: orange;
 }
-
-.havedata.redvmt {
-    fill: red;
-}
-.havedata.greenvmt {
-    fill:green;
-}
-
 .grid.active {
     fill: #449;
 }
 .grid.active:hover {
     fill: #e4f;
+}
+
+.grid-border {
+  fill: none;
+  stroke: #777;
+  pointer-events: none;
+}
+.overlay {
+    fill: none;
+    pointer-events: all;
 }

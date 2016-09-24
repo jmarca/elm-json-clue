@@ -1,15 +1,17 @@
 port module JsonClue exposing (..)
 
 import Html exposing (..)
-import Html.App as Html
-import Html.Attributes exposing (..)
+import Html.App as App
+import Html.Attributes as Attr
 import Html.Events exposing (..)
 import Http
+import Svg exposing (..)
+import Svg.Attributes as SvgAttr exposing (..)
 import Json.Decode as Json exposing (..)
 import Task
 
 main =
-  Html.programWithFlags
+  App.programWithFlags
     { init = init
     , view = view
     , update = update
@@ -119,12 +121,17 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-  div []
-    [ h2 [] [Html.text model.status]
-    , p[][ Html.text  model.status ]
-    , p[][ Html.text (List.foldr (++) ""(List.intersperse ", " model.records)) ]
-    , button [ onClick MorePlease ] [ Html.text "More Please!" ]
-    ]
+    div [Attr.class "container"]
+    [div [Attr.class "row"][
+          div [Attr.class "mapapp col"][
+               Svg.svg [  width "500", height "500"][]],
+          div [Attr.class "mapcontrol col"][
+               h2 []
+                   [Html.text model.status]
+              , p[][ Html.text  model.status ]
+              , p[][ Html.text (List.foldr (++) ""(List.intersperse ", " model.records)) ]
+              , button [ onClick MorePlease ] [ Html.text "More Please!" ]
+              ]]]
 
 
 
