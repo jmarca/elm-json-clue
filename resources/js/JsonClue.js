@@ -9073,17 +9073,44 @@ var _jmarca$elm_d3_map$JsonClue$Model = F2(
 	function (a, b) {
 		return {status: a, records: b};
 	});
-var _jmarca$elm_d3_map$JsonClue$init = function (file) {
-	return {
-		ctor: '_Tuple2',
-		_0: A2(
-			_jmarca$elm_d3_map$JsonClue$Model,
-			file,
-			_elm_lang$core$Native_List.fromArray(
-				['waiting.gif', 'syntax mystery'])),
-		_1: _elm_lang$core$Platform_Cmd$none
-	};
-};
+var _jmarca$elm_d3_map$JsonClue$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'MorePlease':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'FetchSucceed':
+				var _p2 = _p0._0;
+				var incoming = function () {
+					var _p1 = _p2.records;
+					if (_p1.ctor === '::') {
+						return _p1._0;
+					} else {
+						return _elm_lang$core$Native_List.fromArray(
+							['empty']);
+					}
+				}();
+				return {
+					ctor: '_Tuple2',
+					_0: A2(_jmarca$elm_d3_map$JsonClue$Model, _p2.status, incoming),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'FetchSucceed2':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _jmarca$elm_d3_map$JsonClue$getTopoJson(_p0._0)
+				};
+			case 'Suggest':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _jmarca$elm_d3_map$JsonClue$d3Update(_p0._0)
+				};
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
 var _jmarca$elm_d3_map$JsonClue$Properties = F2(
 	function (a, b) {
 		return {gid: a, id: b};
@@ -9137,48 +9164,17 @@ var _jmarca$elm_d3_map$JsonClue$getIt2 = function (f) {
 		_jmarca$elm_d3_map$JsonClue$FetchSucceed2,
 		A2(_evancz$elm_http$Http$get, _jmarca$elm_d3_map$JsonClue$decodeResult2, url));
 };
-var _jmarca$elm_d3_map$JsonClue$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
-			case 'MorePlease':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _jmarca$elm_d3_map$JsonClue$getIt2(model.status)
-				};
-			case 'FetchSucceed':
-				var _p2 = _p0._0;
-				var incoming = function () {
-					var _p1 = _p2.records;
-					if (_p1.ctor === '::') {
-						return _p1._0;
-					} else {
-						return _elm_lang$core$Native_List.fromArray(
-							['empty']);
-					}
-				}();
-				return {
-					ctor: '_Tuple2',
-					_0: A2(_jmarca$elm_d3_map$JsonClue$Model, _p2.status, incoming),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'FetchSucceed2':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _jmarca$elm_d3_map$JsonClue$getTopoJson(_p0._0)
-				};
-			case 'Suggest':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _jmarca$elm_d3_map$JsonClue$d3Update(_p0._0)
-				};
-			default:
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-		}
-	});
+var _jmarca$elm_d3_map$JsonClue$init = function (file) {
+	return {
+		ctor: '_Tuple2',
+		_0: A2(
+			_jmarca$elm_d3_map$JsonClue$Model,
+			file,
+			_elm_lang$core$Native_List.fromArray(
+				['waiting.gif', 'syntax mystery'])),
+		_1: _jmarca$elm_d3_map$JsonClue$getIt2(file)
+	};
+};
 var _jmarca$elm_d3_map$JsonClue$FetchSucceed = function (a) {
 	return {ctor: 'FetchSucceed', _0: a};
 };

@@ -64,7 +64,7 @@ type alias Feature =
 
 init: String -> (Model, Cmd Msg)
 init file =
-  (Model file ["waiting.gif", "syntax mystery"], Cmd.none)
+  (Model file ["waiting.gif", "syntax mystery"], getIt2 file)
 
 
 -- UPDATE
@@ -86,7 +86,7 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     MorePlease ->
-      (model, (getIt2 model.status))
+      (model, Cmd.none)
 
     FetchSucceed rec ->
         let
