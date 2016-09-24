@@ -21,9 +21,15 @@
         <script src="js/topojson.min.js"></script>
         <!-- Run our Elm app! -->
         <script>
-         function zoomed(g){
+         function zoomed(g,mesh){
              return function(){
-                 g.attr("transform",d3.event.transform)
+                 var transform = d3.event.transform
+                 g.attr("transform",transform)
+
+                 //var k = 30 > transform.k ? 30 : transform.k
+                 //mesh.style("stroke-width",1/k)
+                 //console.log(d3.event.transform.k)
+                 return null
              }
          }
          var app =
@@ -59,19 +65,12 @@
              var ids = features.map(function(f){
                  return f.properties.id
              })
-             var svg, g, zoom
+             var svg, g, zoom, mesh
              app.ports.features.send(ids)
 
              // render the map outline here, handle the coloring in elm
              svg = d3.select("svg")
              var g = svg.append("g")
-
-             zoom = d3.zoom()
-                          .scaleExtent( [1, 512])
-                          .on("zoom", zoomed(g));
-
-             svg
-                 .call(zoom)
 
              g.selectAll("path")
                 .data(land.features,function(d,i){
@@ -80,11 +79,18 @@
                 .enter().append("path")
                 .attr("class","grid")
                 .attr("d",path)
-             /* g.append("path")
+             /* mesh = g.append("path")
               *     .datum(mesh)
               *     .attr("class","grid-border")
               *     .attr("d",path)
               */
+             zoom = d3.zoom()
+                          .scaleExtent( [1, 512])
+                          .on("zoom", zoomed(g,mesh));
+
+             svg
+                 .call(zoom)
+
 
              return null
              })
