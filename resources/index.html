@@ -63,7 +63,7 @@
 
              // render the map outline here, handle the coloring in elm
              svg = d3.select("svg")
-             var g = svg.append("g")
+             var g = svg.select("g")
 
              /* g.selectAll("path")
               *    .data(land.features,function(d,i){
@@ -81,8 +81,13 @@
                           .scaleExtent( [1, 512])
                           .on("zoom", zoomed(g,mesh));
 
-             svg
-                 .call(zoom)
+             svg.call(zoom)
+             /* .select("rect")/*
+              *                   .attr("class","overlay")
+              *                   .attr("width",500)
+              *                   .attr("height",500)
+              *
+              */
 
              app.ports.features.send(id_path)
 

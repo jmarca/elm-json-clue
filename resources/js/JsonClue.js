@@ -9053,6 +9053,21 @@ var _evancz$elm_http$Http$post = F3(
 	});
 
 var _jmarca$elm_d3_map$JsonClue$decodeResult2 = _elm_lang$core$Json_Decode$value;
+var _jmarca$elm_d3_map$JsonClue$svgpath = function (entry) {
+	return A2(
+		_elm_lang$svg$Svg$path,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$class('grid'),
+				_elm_lang$html$Html_Attributes$id(entry.id),
+				_elm_lang$svg$Svg_Attributes$d(entry.path)
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+};
+var _jmarca$elm_d3_map$JsonClue$svgpaths = function (paths) {
+	return A2(_elm_lang$core$List$map, _jmarca$elm_d3_map$JsonClue$svgpath, paths);
+};
 var _jmarca$elm_d3_map$JsonClue$d3Update = _elm_lang$core$Native_Platform.outgoingPort(
 	'd3Update',
 	function (v) {
@@ -9079,7 +9094,14 @@ var _jmarca$elm_d3_map$JsonClue$update = F2(
 					_1: _jmarca$elm_d3_map$JsonClue$getTopoJson(_p0._0)
 				};
 			case 'IdPath':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				return {
+					ctor: '_Tuple2',
+					_0: {
+						file: model.file,
+						records: _elm_lang$core$Maybe$Just(_p0._0)
+					},
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			default:
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}
@@ -9099,9 +9121,13 @@ var _jmarca$elm_d3_map$JsonClue$features = _elm_lang$core$Native_Platform.incomi
 							{id: id, path: path});
 					});
 			})));
+var _jmarca$elm_d3_map$JsonClue$PathRecord = F2(
+	function (a, b) {
+		return {id: a, path: b};
+	});
 var _jmarca$elm_d3_map$JsonClue$Model = F2(
 	function (a, b) {
-		return {status: a, records: b};
+		return {file: a, records: b};
 	});
 var _jmarca$elm_d3_map$JsonClue$Properties = F2(
 	function (a, b) {
@@ -9114,10 +9140,6 @@ var _jmarca$elm_d3_map$JsonClue$Geometry = F2(
 var _jmarca$elm_d3_map$JsonClue$Feature = F3(
 	function (a, b, c) {
 		return {type$: a, properties: b, geometry: c};
-	});
-var _jmarca$elm_d3_map$JsonClue$PathRecord = F2(
-	function (a, b) {
-		return {id: a, path: b};
 	});
 var _jmarca$elm_d3_map$JsonClue$FetchFail = function (a) {
 	return {ctor: 'FetchFail', _0: a};
@@ -9139,106 +9161,159 @@ var _jmarca$elm_d3_map$JsonClue$getIt2 = function (f) {
 		_jmarca$elm_d3_map$JsonClue$FetchSucceed2,
 		A2(_evancz$elm_http$Http$get, _jmarca$elm_d3_map$JsonClue$decodeResult2, url));
 };
-var _jmarca$elm_d3_map$JsonClue$init = function (file) {
+var _jmarca$elm_d3_map$JsonClue$init = function (f) {
 	return {
 		ctor: '_Tuple2',
-		_0: A2(
-			_jmarca$elm_d3_map$JsonClue$Model,
-			file,
-			_elm_lang$core$Native_List.fromArray(
-				['waiting.gif', 'syntax mystery'])),
-		_1: _jmarca$elm_d3_map$JsonClue$getIt2(file)
+		_0: {file: f, records: _elm_lang$core$Maybe$Nothing},
+		_1: _jmarca$elm_d3_map$JsonClue$getIt2(f)
 	};
 };
 var _jmarca$elm_d3_map$JsonClue$MorePlease = {ctor: 'MorePlease'};
 var _jmarca$elm_d3_map$JsonClue$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('container')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('row')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class('mapapp col')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								A2(
-								_elm_lang$svg$Svg$svg,
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$svg$Svg_Attributes$width('500'),
-										_elm_lang$svg$Svg_Attributes$height('500')
-									]),
-								_elm_lang$core$Native_List.fromArray(
-									[]))
-							])),
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class('mapcontrol col')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								A2(
-								_elm_lang$html$Html$h2,
-								_elm_lang$core$Native_List.fromArray(
-									[]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text(model.status)
-									])),
-								A2(
-								_elm_lang$html$Html$p,
-								_elm_lang$core$Native_List.fromArray(
-									[]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text(model.status)
-									])),
-								A2(
-								_elm_lang$html$Html$p,
-								_elm_lang$core$Native_List.fromArray(
-									[]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text(
-										A3(
-											_elm_lang$core$List$foldr,
-											F2(
-												function (x, y) {
-													return A2(_elm_lang$core$Basics_ops['++'], x, y);
-												}),
-											'',
-											A2(_elm_lang$core$List$intersperse, ', ', model.records)))
-									])),
-								A2(
-								_elm_lang$html$Html$button,
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html_Events$onClick(_jmarca$elm_d3_map$JsonClue$MorePlease)
-									]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text('More Please!')
-									]))
-							]))
-					]))
-			]));
+	var len = A2(_elm_lang$core$Debug$log, 'rendering ', model.file);
+	var _p1 = model.records;
+	if (_p1.ctor === 'Nothing') {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('container')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('row')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(
+							_elm_lang$html$Html$div,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Attributes$class('mapapp col')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									A2(
+									_elm_lang$svg$Svg$svg,
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$svg$Svg_Attributes$width('500'),
+											_elm_lang$svg$Svg_Attributes$height('500')
+										]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											A2(
+											_elm_lang$svg$Svg$g,
+											_elm_lang$core$Native_List.fromArray(
+												[]),
+											_elm_lang$core$Native_List.fromArray(
+												[]))
+										]))
+								])),
+							A2(
+							_elm_lang$html$Html$div,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Attributes$class('mapcontrol col')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									A2(
+									_elm_lang$html$Html$h2,
+									_elm_lang$core$Native_List.fromArray(
+										[]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html$text(model.file)
+										])),
+									A2(
+									_elm_lang$html$Html$button,
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html_Events$onClick(_jmarca$elm_d3_map$JsonClue$MorePlease)
+										]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html$text('More Please!')
+										]))
+								]))
+						]))
+				]));
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('container')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('row')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(
+							_elm_lang$html$Html$div,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Attributes$class('mapapp col')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									A2(
+									_elm_lang$svg$Svg$svg,
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$svg$Svg_Attributes$width('500'),
+											_elm_lang$svg$Svg_Attributes$height('500')
+										]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											A2(
+											_elm_lang$svg$Svg$g,
+											_elm_lang$core$Native_List.fromArray(
+												[]),
+											_jmarca$elm_d3_map$JsonClue$svgpaths(_p1._0))
+										]))
+								])),
+							A2(
+							_elm_lang$html$Html$div,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Attributes$class('mapcontrol col')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[
+									A2(
+									_elm_lang$html$Html$h2,
+									_elm_lang$core$Native_List.fromArray(
+										[]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html$text(model.file)
+										])),
+									A2(
+									_elm_lang$html$Html$button,
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html_Events$onClick(_jmarca$elm_d3_map$JsonClue$MorePlease)
+										]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html$text('More Please!')
+										]))
+								]))
+						]))
+				]));
+	}
 };
 var _jmarca$elm_d3_map$JsonClue$main = {
 	main: _elm_lang$html$Html_App$programWithFlags(

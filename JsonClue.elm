@@ -5,6 +5,7 @@ import Html.App as App
 import Html.Attributes as Attr
 import Html.Events exposing (..)
 import Http
+import Maybe exposing (..)
 import Svg exposing (..)
 import Svg.Attributes as SvgAttr exposing (..)
 import Json.Decode as Json exposing (..)
@@ -23,11 +24,10 @@ main =
 -- MODEL
 
 
+type alias PathRecord = {id : String, path : String}
 
-type alias Model =
-  { status : String
-  , records : List String
-  }
+
+type alias Model =  { file : String   , records : Maybe (List PathRecord)}
 
 type alias Properties =
     { gid : Int
@@ -63,8 +63,8 @@ type alias Feature =
 
 
 init: String -> (Model, Cmd Msg)
-init file =
-  (Model file ["waiting.gif", "syntax mystery"], getIt2 file)
+init f =
+  ({ file = f, records = Nothing } , getIt2 f)
 
 
 -- UPDATE
@@ -91,7 +91,7 @@ update msg model =
         (model, getTopoJson rec)
 
     IdPath newFeatures ->
-        (model, Cmd.none) --d3Update newFeatures)
+        ({file = model.file, records = Just newFeatures}, Cmd.none) --d3Update newFeatures)
 
     FetchFail _ ->
         (model, Cmd.none)
@@ -106,21 +106,49 @@ subscriptions model =
 
 -- VIEW
 
+svgpaths : List PathRecord -> List (Svg msg)
+svgpaths paths =
+    List.map svgpath paths
+
+--pathRender : PathRecord -> Html
+svgpath : PathRecord -> Svg msg
+svgpath entry =
+    Svg.path [SvgAttr.class "grid", Attr.id entry.id, SvgAttr.d entry.path][]
+
 
 
 view : Model -> Html Msg
 view model =
-    div [Attr.class "container"]
-    [div [Attr.class "row"][
-          div [Attr.class "mapapp col"][
-               Svg.svg [  width "500", height "500"][]],
-          div [Attr.class "mapcontrol col"][
-               h2 []
-                   [Html.text model.status]
-              , p[][ Html.text  model.status ]
-              , p[][ Html.text (List.foldr (++) ""(List.intersperse ", " model.records)) ]
-              , button [ onClick MorePlease ] [ Html.text "More Please!" ]
-              ]]]
+    let
+        len = (Debug.log "rendering " model.file)
+    in
+       (
+        case model.records of
+            Nothing ->
+            (div [Attr.class "container"]
+                 [div [Attr.class "row"][
+                       div [Attr.class "mapapp col"][
+                            Svg.svg [  width "500", height "500"][
+                                 Svg.g [][]
+                                ]],
+                           div [Attr.class "mapcontrol col"][
+                                h2 []
+                                    [Html.text model.file]
+                               , button [ onClick MorePlease ] [ Html.text "More Please!" ]
+                               ]]])
+            Just records ->
+            ( div [Attr.class "container"]
+                  [div [Attr.class "row"][
+                        div [Attr.class "mapapp col"][
+                             Svg.svg [  width "500", height "500"][
+                                  Svg.g [] (svgpaths records)
+                                 ]],
+                            div [Attr.class "mapcontrol col"][
+                                 h2 []
+                                     [Html.text model.file]
+                                , button [ onClick MorePlease ] [ Html.text "More Please!" ]
+                                ]]] )
+       )
 
 
 
@@ -137,8 +165,6 @@ getIt2 f =
 
 decodeResult2 : Json.Decoder Json.Value
 decodeResult2 = Json.value
-
-type alias PathRecord = {id : String, path : String}
 
 --decodeResult : List decodeIdPath
 
