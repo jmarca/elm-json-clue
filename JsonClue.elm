@@ -127,11 +127,11 @@ view model =
                             Svg.svg [  width "500", height "500"][
                                  Svg.g [][]
                                 ]],
-                           div [Attr.class "mapcontrol col"][
-                                h2 []
-                                    [Html.text model.file]
-                               , button [ onClick MorePlease ] [ Html.text "More Please!" ]
-                               ]]])
+                       div [Attr.class "mapcontrol col"][
+                            h2 []
+                                [Html.text model.file]
+                           , button [ onClick MorePlease ] [ Html.text "More Please!" ]
+                           ]]])
         Just records ->
             ( div [Attr.class "container"]
                   [div [Attr.class "row"][
@@ -139,11 +139,11 @@ view model =
                              Svg.svg [  width "500", height "500"][
                                   Svg.g [] (svgpaths records)
                                  ]],
-                            div [Attr.class "mapcontrol col"][
-                                 h2 []
-                                     [Html.text model.file]
-                                , button [ onClick MorePlease ] [ Html.text "More Please!" ]
-                                ]]] )
+                        div [Attr.class "mapcontrol col"][
+                             h2 []
+                                 [Html.text model.file]
+                            , button [ onClick MorePlease ] [ Html.text "More Please!" ]
+                            ]]] )
 
 
 
