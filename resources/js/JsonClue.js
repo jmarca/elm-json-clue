@@ -9170,7 +9170,6 @@ var _jmarca$elm_d3_map$JsonClue$init = function (f) {
 };
 var _jmarca$elm_d3_map$JsonClue$MorePlease = {ctor: 'MorePlease'};
 var _jmarca$elm_d3_map$JsonClue$view = function (model) {
-	var len = A2(_elm_lang$core$Debug$log, 'rendering ', model.file);
 	var _p1 = model.records;
 	if (_p1.ctor === 'Nothing') {
 		return A2(

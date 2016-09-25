@@ -119,12 +119,8 @@ svgpath entry =
 
 view : Model -> Html Msg
 view model =
-    let
-        len = (Debug.log "rendering " model.file)
-    in
-       (
-        case model.records of
-            Nothing ->
+    case model.records of
+        Nothing ->
             (div [Attr.class "container"]
                  [div [Attr.class "row"][
                        div [Attr.class "mapapp col"][
@@ -136,7 +132,7 @@ view model =
                                     [Html.text model.file]
                                , button [ onClick MorePlease ] [ Html.text "More Please!" ]
                                ]]])
-            Just records ->
+        Just records ->
             ( div [Attr.class "container"]
                   [div [Attr.class "row"][
                         div [Attr.class "mapapp col"][
@@ -148,7 +144,7 @@ view model =
                                      [Html.text model.file]
                                 , button [ onClick MorePlease ] [ Html.text "More Please!" ]
                                 ]]] )
-       )
+
 
 
 
