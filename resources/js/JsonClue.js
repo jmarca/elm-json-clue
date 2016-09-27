@@ -9233,7 +9233,9 @@ var _jmarca$elm_d3_map$JsonClue$update = F2(
 			case 'MorePlease':
 				return {
 					ctor: '_Tuple2',
-					_0: model,
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{hour: model.hour + 1}),
 					_1: _jmarca$elm_d3_map$JsonClue$getData(model)
 				};
 			case 'FetchSucceed2':
@@ -9293,6 +9295,41 @@ var _jmarca$elm_d3_map$JsonClue$init = function (fl) {
 };
 var _jmarca$elm_d3_map$JsonClue$MorePlease = {ctor: 'MorePlease'};
 var _jmarca$elm_d3_map$JsonClue$view = function (model) {
+	var hour = (_elm_lang$core$Native_Utils.cmp(model.hour, 10) < 0) ? A2(
+		_elm_lang$core$Basics_ops['++'],
+		'0',
+		_elm_lang$core$Basics$toString(model.hour)) : _elm_lang$core$Basics$toString(model.hour);
+	var day = (_elm_lang$core$Native_Utils.cmp(model.day, 10) < 0) ? A2(
+		_elm_lang$core$Basics_ops['++'],
+		'0',
+		_elm_lang$core$Basics$toString(model.day)) : _elm_lang$core$Basics$toString(model.day);
+	var month = (_elm_lang$core$Native_Utils.cmp(model.month, 10) < 0) ? A2(
+		_elm_lang$core$Basics_ops['++'],
+		'0',
+		_elm_lang$core$Basics$toString(model.month)) : _elm_lang$core$Basics$toString(model.month);
+	var year = (_elm_lang$core$Native_Utils.cmp(model.year, 10) < 0) ? A2(
+		_elm_lang$core$Basics_ops['++'],
+		'0',
+		_elm_lang$core$Basics$toString(model.year)) : _elm_lang$core$Basics$toString(model.year);
+	var filePath = A2(
+		_elm_lang$core$Basics_ops['++'],
+		year,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'_',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				month,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'_',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						day,
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'_',
+							A2(_elm_lang$core$Basics_ops['++'], hour, '00.json')))))));
 	var _p2 = model.records;
 	if (_p2.ctor === 'Nothing') {
 		return A2(
@@ -9360,7 +9397,8 @@ var _jmarca$elm_d3_map$JsonClue$view = function (model) {
 										]),
 									_elm_lang$core$Native_List.fromArray(
 										[
-											_elm_lang$html$Html$text('More Please!')
+											_elm_lang$html$Html$text(
+											A2(_elm_lang$core$Basics_ops['++'], 'get ', filePath))
 										]))
 								]))
 						]))
@@ -9433,7 +9471,8 @@ var _jmarca$elm_d3_map$JsonClue$view = function (model) {
 											]),
 										_elm_lang$core$Native_List.fromArray(
 											[
-												_elm_lang$html$Html$text('More Please!')
+												_elm_lang$html$Html$text(
+												A2(_elm_lang$core$Basics_ops['++'], 'get ', filePath))
 											]))
 									]))
 							]))
@@ -9503,7 +9542,8 @@ var _jmarca$elm_d3_map$JsonClue$view = function (model) {
 											]),
 										_elm_lang$core$Native_List.fromArray(
 											[
-												_elm_lang$html$Html$text('More Please!')
+												_elm_lang$html$Html$text(
+												A2(_elm_lang$core$Basics_ops['++'], 'get ', filePath))
 											]))
 									]))
 							]))

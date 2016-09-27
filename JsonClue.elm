@@ -113,7 +113,7 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     MorePlease ->
-      (model, getData model)
+      ({model | hour = model.hour + 1}, getData model)
 
     FetchSucceed2 rec ->
         (model, getTopoJson rec)
@@ -183,47 +183,55 @@ svgpath2 colordata entry =
 
 view : Model -> Html Msg
 view model =
-    case model.records of
-        Nothing ->
-            (div [Attr.class "container"]
-                 [div [Attr.class "row"][
-                       div [Attr.class "mapapp col"][
-                            Svg.svg [  width "500", height "500"][
-                                 Svg.g [][]
-                                ]],
-                       div [Attr.class "mapcontrol col"][
-                            h2 []
-                                [Html.text model.file]
-                           , button [ onClick MorePlease ] [ Html.text "More Please!" ]
-                           ]]])
-        Just records ->
-            case model.data of
-                Nothing ->
-                    ( div [Attr.class "container"]
-                          [div [Attr.class "row"][
-                                div [Attr.class "mapapp col"][
-                                     Svg.svg [  width "500", height "500"][
-                                          Svg.g [] (svgpaths records)
-                                         ]],
-                                div [Attr.class "mapcontrol col"][
-                                     h2 []
-                                         [Html.text model.file]
-                                    , button [ onClick MorePlease ] [ Html.text "More Please!" ]
-                                    ]]]
-                    )
-                Just data ->
-                    ( div [Attr.class "container"]
-                          [div [Attr.class "row"][
-                                div [Attr.class "mapapp col"][
-                                     Svg.svg [  width "500", height "500"][
-                                          Svg.g [] (svgpaths2 records data)
-                                         ]],
-                                div [Attr.class "mapcontrol col"][
-                                     h2 []
-                                         [Html.text model.file]
-                                    , button [ onClick MorePlease ] [ Html.text "More Please!" ]
-                                    ]]]
-                    )
+    let
+        year = if(model.year < 10) then  "0"++toString(model.year) else toString(model.year)
+        month= if(model.month < 10)then "0"++toString(model.month) else toString(model.month)
+        day  = if(model.day < 10)  then "0"++toString(model.day)  else  toString(model.day)
+        hour = if(model.hour < 10) then "0"++toString(model.hour) else  toString(model.hour)
+        filePath = year++"_"++month++"_"++day++"_"++hour++"00.json"
+    in
+
+        case model.records of
+            Nothing ->
+                (div [Attr.class "container"]
+                     [div [Attr.class "row"][
+                           div [Attr.class "mapapp col"][
+                                Svg.svg [  width "500", height "500"][
+                                     Svg.g [][]
+                                    ]],
+                           div [Attr.class "mapcontrol col"][
+                                h2 []
+                                    [Html.text model.file]
+                               , button [ onClick MorePlease ] [ Html.text ("get "++filePath) ]
+                               ]]])
+            Just records ->
+                case model.data of
+                    Nothing ->
+                        ( div [Attr.class "container"]
+                              [div [Attr.class "row"][
+                                    div [Attr.class "mapapp col"][
+                                         Svg.svg [  width "500", height "500"][
+                                              Svg.g [] (svgpaths records)
+                                             ]],
+                                    div [Attr.class "mapcontrol col"][
+                                         h2 []
+                                             [Html.text model.file]
+                                        , button [ onClick MorePlease ] [ Html.text ("get "++filePath) ]
+                                        ]]]
+                        )
+                    Just data ->
+                        ( div [Attr.class "container"]
+                              [div [Attr.class "row"][
+                                    div [Attr.class "mapapp col"][
+                                         Svg.svg [  width "500", height "500"][
+                                              Svg.g [] (svgpaths2 records data)
+                                             ]],
+                                    div [Attr.class "mapcontrol col"][
+                                         h2 []
+                                             [Html.text model.file]
+                                        , button [ onClick MorePlease ] [ Html.text ("get "++filePath) ]
+                                        ]]]
+                        )
 
 
 
