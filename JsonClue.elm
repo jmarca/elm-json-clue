@@ -107,6 +107,8 @@ type Msg
   | FetchFail Http.Error
 
 
+
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
@@ -123,7 +125,7 @@ update msg model =
         ({model | records = Just newFeatures}, Cmd.none)
 
     ColorMap newData ->
-        ({model | data = (Just (Json.decodeValue colorDictionary newData))}, Cmd.none)
+        ({model | data = (Result.toMaybe(Json.decodeValue colorDictionary newData))}, Cmd.none)
 
     FetchFail _ ->
         (model, Cmd.none)
@@ -132,10 +134,12 @@ update msg model =
 
 -- SUBSCRIPTIONS
 
-subscriptions : Model -> List (Sub Msg)
+subscriptions : Model -> Sub Msg
 subscriptions model =
-  [features IdPath
-  ,colors ColorMap ]
+    Sub.batch
+        [ features IdPath
+        , colors ColorMap
+        ]
 
 
 -- VIEW
@@ -158,15 +162,22 @@ svgpath2 :  (Dict String String) -> PathRecord -> Svg msg
 svgpath2 colordata entry =
     let
         colorval = (get entry.id colordata)
-    in
-        Svg.path [SvgAttr.class "grid"
-                 , Attr.id entry.id
-                 , SvgAttr.fill
-                     (case colorval of
-                         Nothing -> "#777"
-                         Just colorval -> colorval)
+        colorString = Maybe.withDefault "inherit" colorval
+        gridstyle = Attr.style
+                       [("fill", colorString)]
 
-                 , SvgAttr.d entry.path][]
+    in
+        case colorString of
+            "inherit" ->
+                Svg.path [SvgAttr.class "grid"
+                         , Attr.id entry.id
+                         , SvgAttr.d entry.path][]
+            _ ->
+                Svg.path [SvgAttr.class "grid"
+                         , Attr.id entry.id
+                         , gridstyle
+                         , SvgAttr.d entry.path][]
+
 
 
 
