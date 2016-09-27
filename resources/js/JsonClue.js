@@ -9052,6 +9052,7 @@ var _evancz$elm_http$Http$post = F3(
 			A2(_evancz$elm_http$Http$send, _evancz$elm_http$Http$defaultSettings, request));
 	});
 
+var _jmarca$elm_d3_map$JsonClue$gridVolumes = _elm_lang$core$Json_Decode$dict(_elm_lang$core$Json_Decode$float);
 var _jmarca$elm_d3_map$JsonClue$decodeResult2 = _elm_lang$core$Json_Decode$value;
 var _jmarca$elm_d3_map$JsonClue$svgpath = function (entry) {
 	return A2(
@@ -9081,31 +9082,6 @@ var _jmarca$elm_d3_map$JsonClue$getTopoJson = _elm_lang$core$Native_Platform.out
 	function (v) {
 		return v;
 	});
-var _jmarca$elm_d3_map$JsonClue$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
-			case 'MorePlease':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			case 'FetchSucceed2':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _jmarca$elm_d3_map$JsonClue$getTopoJson(_p0._0)
-				};
-			case 'IdPath':
-				return {
-					ctor: '_Tuple2',
-					_0: {
-						file: model.file,
-						records: _elm_lang$core$Maybe$Just(_p0._0)
-					},
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			default:
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-		}
-	});
 var _jmarca$elm_d3_map$JsonClue$features = _elm_lang$core$Native_Platform.incomingPort(
 	'features',
 	_elm_lang$core$Json_Decode$list(
@@ -9125,21 +9101,13 @@ var _jmarca$elm_d3_map$JsonClue$PathRecord = F2(
 	function (a, b) {
 		return {id: a, path: b};
 	});
-var _jmarca$elm_d3_map$JsonClue$Model = F2(
-	function (a, b) {
-		return {file: a, records: b};
+var _jmarca$elm_d3_map$JsonClue$Model = F8(
+	function (a, b, c, d, e, f, g, h) {
+		return {file: a, records: b, data: c, year: d, month: e, day: f, hour: g, dataUrl: h};
 	});
-var _jmarca$elm_d3_map$JsonClue$Properties = F2(
+var _jmarca$elm_d3_map$JsonClue$Flags = F2(
 	function (a, b) {
-		return {gid: a, id: b};
-	});
-var _jmarca$elm_d3_map$JsonClue$Geometry = F2(
-	function (a, b) {
-		return {type$: a, coordinates: b};
-	});
-var _jmarca$elm_d3_map$JsonClue$Feature = F3(
-	function (a, b, c) {
-		return {type$: a, properties: b, geometry: c};
+		return {mapfile: a, dataUrl: b};
 	});
 var _jmarca$elm_d3_map$JsonClue$FetchFail = function (a) {
 	return {ctor: 'FetchFail', _0: a};
@@ -9150,6 +9118,95 @@ var _jmarca$elm_d3_map$JsonClue$IdPath = function (a) {
 var _jmarca$elm_d3_map$JsonClue$subscriptions = function (model) {
 	return _jmarca$elm_d3_map$JsonClue$features(_jmarca$elm_d3_map$JsonClue$IdPath);
 };
+var _jmarca$elm_d3_map$JsonClue$FetchDataSucceed = function (a) {
+	return {ctor: 'FetchDataSucceed', _0: a};
+};
+var _jmarca$elm_d3_map$JsonClue$getData = function (model) {
+	var hour = (_elm_lang$core$Native_Utils.cmp(model.hour, 10) < 0) ? A2(
+		_elm_lang$core$Basics_ops['++'],
+		'0',
+		_elm_lang$core$Basics$toString(model.hour)) : _elm_lang$core$Basics$toString(model.hour);
+	var day = (_elm_lang$core$Native_Utils.cmp(model.day, 10) < 0) ? A2(
+		_elm_lang$core$Basics_ops['++'],
+		'0',
+		_elm_lang$core$Basics$toString(model.day)) : _elm_lang$core$Basics$toString(model.day);
+	var month = (_elm_lang$core$Native_Utils.cmp(model.month, 10) < 0) ? A2(
+		_elm_lang$core$Basics_ops['++'],
+		'0',
+		_elm_lang$core$Basics$toString(model.month)) : _elm_lang$core$Basics$toString(model.month);
+	var year = (_elm_lang$core$Native_Utils.cmp(model.year, 10) < 0) ? A2(
+		_elm_lang$core$Basics_ops['++'],
+		'0',
+		_elm_lang$core$Basics$toString(model.year)) : _elm_lang$core$Basics$toString(model.year);
+	var filePath = A2(
+		_elm_lang$core$Basics_ops['++'],
+		year,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'_',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				month,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'_',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						day,
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'_',
+							A2(_elm_lang$core$Basics_ops['++'], hour, '00.json')))))));
+	var url = A2(
+		_elm_lang$core$Basics_ops['++'],
+		model.dataUrl,
+		A2(_elm_lang$core$Basics_ops['++'], '/', filePath));
+	return A3(
+		_elm_lang$core$Task$perform,
+		_jmarca$elm_d3_map$JsonClue$FetchFail,
+		_jmarca$elm_d3_map$JsonClue$FetchDataSucceed,
+		A2(_evancz$elm_http$Http$get, _jmarca$elm_d3_map$JsonClue$gridVolumes, url));
+};
+var _jmarca$elm_d3_map$JsonClue$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'MorePlease':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _jmarca$elm_d3_map$JsonClue$getData(model)
+				};
+			case 'FetchSucceed2':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _jmarca$elm_d3_map$JsonClue$getTopoJson(_p0._0)
+				};
+			case 'FetchDataSucceed':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							data: _elm_lang$core$Maybe$Just(_p0._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'IdPath':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							records: _elm_lang$core$Maybe$Just(_p0._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
 var _jmarca$elm_d3_map$JsonClue$FetchSucceed2 = function (a) {
 	return {ctor: 'FetchSucceed2', _0: a};
 };
@@ -9161,11 +9218,11 @@ var _jmarca$elm_d3_map$JsonClue$getIt2 = function (f) {
 		_jmarca$elm_d3_map$JsonClue$FetchSucceed2,
 		A2(_evancz$elm_http$Http$get, _jmarca$elm_d3_map$JsonClue$decodeResult2, url));
 };
-var _jmarca$elm_d3_map$JsonClue$init = function (f) {
+var _jmarca$elm_d3_map$JsonClue$init = function (fl) {
 	return {
 		ctor: '_Tuple2',
-		_0: {file: f, records: _elm_lang$core$Maybe$Nothing},
-		_1: _jmarca$elm_d3_map$JsonClue$getIt2(f)
+		_0: {file: fl.mapfile, dataUrl: fl.dataUrl, records: _elm_lang$core$Maybe$Nothing, data: _elm_lang$core$Maybe$Nothing, year: 2012, month: 1, day: 11, hour: 8},
+		_1: _jmarca$elm_d3_map$JsonClue$getIt2(fl.mapfile)
 	};
 };
 var _jmarca$elm_d3_map$JsonClue$MorePlease = {ctor: 'MorePlease'};
@@ -9317,7 +9374,18 @@ var _jmarca$elm_d3_map$JsonClue$view = function (model) {
 var _jmarca$elm_d3_map$JsonClue$main = {
 	main: _elm_lang$html$Html_App$programWithFlags(
 		{init: _jmarca$elm_d3_map$JsonClue$init, view: _jmarca$elm_d3_map$JsonClue$view, update: _jmarca$elm_d3_map$JsonClue$update, subscriptions: _jmarca$elm_d3_map$JsonClue$subscriptions}),
-	flags: _elm_lang$core$Json_Decode$string
+	flags: A2(
+		_elm_lang$core$Json_Decode$andThen,
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'dataUrl', _elm_lang$core$Json_Decode$string),
+		function (dataUrl) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				A2(_elm_lang$core$Json_Decode_ops[':='], 'mapfile', _elm_lang$core$Json_Decode$string),
+				function (mapfile) {
+					return _elm_lang$core$Json_Decode$succeed(
+						{dataUrl: dataUrl, mapfile: mapfile});
+				});
+		})
 };
 
 var Elm = {};

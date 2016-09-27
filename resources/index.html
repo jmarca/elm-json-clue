@@ -35,7 +35,40 @@
          var app =
              // Note: if your Elm module is named "MyThing.Root" you
              // would call "Elm.MyThing.Root.embed(node)" instead.
-             Elm.JsonClue.embed(document.getElementById("app"),'data/CA_grid_topology4326.json')
+             Elm.JsonClue.embed(document.getElementById("app"),{
+                 'mapfile':'data/CA_grid_topology4326.json',
+                 'dataUrl':'data'})
+
+         app.ports.getColorJson.subscribe(function(json) {
+             var c = d3.scalePow().exponent(0.3)
+                       .domain([0, 1744422])
+                       .range([0,1])
+             var colormap = {}
+             // apply c.interpolateViridis to each incoming thing
+             var cellids = Object.keys(json)
+             var maxsum = 0
+             cellids.forEach(function(cellid){
+                 var roaddata = json[cellids]
+                 var roadtypes = Object.keys(roaddata)
+
+                 // sum up sum_vmt and n_mt values
+                 var sum = roadtypes.reduce(function(prev,curr){
+                     var val = 0
+                     if(roaddata[curr].sum_vmt !== undefined){
+                         val = +roaddata[curr].sum_vmt
+                     }else{
+                         if(roaddata[curr].n_mt !== undefined){
+                             val = +roaddata[curr].n_mt
+                         }}
+                     return prev + val
+                 })
+                 maxsum = sum > maxsum ? sum : maxsum
+                 colormap[cellid] = c.interpolateViridis(sum)
+             })
+             console.log(maxsum)
+             app.ports.colors.send(colormap)
+
+         })
 
          app.ports.getTopoJson.subscribe(function(json) {
              var allgrids = json.objects.grids
